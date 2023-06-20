@@ -38,6 +38,8 @@ struct DetailView: View {
             Text(book.review ?? "No review")
                 .padding()
             
+            Text("Reviewed on: \(book.currentDate?.formatted(date: .abbreviated, time: .omitted) ?? "No date available")")
+            
             RatingView(rating: .constant(Int(book.rating)))
                 .font(.largeTitle)
         }
@@ -62,7 +64,7 @@ struct DetailView: View {
     func deleteBook() {
         moc.delete(book)
         
-//        try? moc.save()
+        try? moc.save()
         
         dismiss()
     }
