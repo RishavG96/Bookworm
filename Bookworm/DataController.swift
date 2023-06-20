@@ -18,7 +18,7 @@ class DataController: ObservableObject {
         container.loadPersistentStores { description, error in
             if let error = error {
                 print("Core data failed to load: \(error.localizedDescription)")
-            }        
+            }
         }
     }
 }

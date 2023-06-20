@@ -43,37 +43,57 @@ struct ContentView: View {
     
     @Environment(\.managedObjectContext) var moc
     
+    @FetchRequest(sortDescriptors: []) var books: FetchedResults<Book>
+    
+    @State private var showingAddScreen = false
+    
     var body: some View {
 //        Toggle("Remember Me", isOn: $rememberMe)
         // this has to change our bool when the user interacts with it. But how does it remember what value should be changed to? It has not got its own local state inside its toggle. Its changing the external rememberMe bool.
         // Binding lets us store a mutable value in a view that actually points to some other value from elsewhere. In toggle, the switch changes own local binding to a bool. But behind the scenes that local binding is actually manipulating the state property inside our view.
         
-        VStack {
-            PushButton(title: "Remember me", isOn: $rememberMe)
-            // Once the PushButton is created, it has its own state. the @State inside it is local data.
-            Text(rememberMe ? "On": "Off")
-            
-            TextEditor(text: $notes)
-                .padding()
-                .frame(height: 200)
-                
-            List(students) { student in
-                Text(student.name ?? "Unknown")
-            }
-            // Adding and Saving students, we have to access the managedObjectConext
-            Button("Add") {
-                let firstNames = ["Ginny", "harry", "Hermoine", "Luna", "Ron"]
-                let lastName = ["Granger", "Lovewood", "Potter", "Weasly"]
-                
-                let chosenFirstName = firstNames.randomElement()!
-                let chosenLastName = lastName.randomElement()!
-                
-                let student = Student(context: moc)
-                student.id = UUID()
-                student.name = "\(chosenFirstName) \(chosenLastName)"
-                
-                try? moc.save()
-            }
+//        VStack {
+//            PushButton(title: "Remember me", isOn: $rememberMe)
+//            // Once the PushButton is created, it has its own state. the @State inside it is local data.
+//            Text(rememberMe ? "On": "Off")
+//
+//            TextEditor(text: $notes)
+//                .padding()
+//                .frame(height: 200)
+//
+//            List(students) { student in
+//                Text(student.name ?? "Unknown")
+//            }
+//            // Adding and Saving students, we have to access the managedObjectConext
+//            Button("Add") {
+//                let firstNames = ["Ginny", "harry", "Hermoine", "Luna", "Ron"]
+//                let lastName = ["Granger", "Lovewood", "Potter", "Weasly"]
+//
+//                let chosenFirstName = firstNames.randomElement()!
+//                let chosenLastName = lastName.randomElement()!
+//
+//                let student = Student(context: moc)
+//                student.id = UUID()
+//                student.name = "\(chosenFirstName) \(chosenLastName)"
+//
+//                try? moc.save()
+//            }
+        
+        NavigationView {
+            Text("Count \(books.count)")
+                .navigationTitle("Bookworm")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            showingAddScreen.toggle()
+                        } label: {
+                            Label("Add Book", systemImage: "plus")
+                        }
+                    }
+                }
+                .sheet(isPresented: $showingAddScreen) {
+                    AddBookView()
+                }
         }
     }
 }
